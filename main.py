@@ -45,7 +45,7 @@ with tab2:
                     st.write(result[i])
                     
                     
-with st.container(border=True)
+with st.container(border=True):
     cc1, cc2, cc3 = st.columns([1,10,1])
     with cc2:
         st.header("Created by:")
