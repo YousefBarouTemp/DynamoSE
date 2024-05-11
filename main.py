@@ -45,7 +45,7 @@ with tab2:
                     
                     
                     
-cc1, cc2, cc3 = st.columns([1,10,1)
+cc1, cc2, cc3 = st.columns([1,10,1])
 with cc2:
     st.markdown("""**Created By:
 
