@@ -28,7 +28,7 @@ with tab1:
             for i in range(len(result)):
                 with st.expander(f"See Result {i + 1}"):
                     st.write(result[i])
-                    del result
+            del result
                 
 with tab2:
     text_input = st.text_input("Search bar", value=None, max_chars=256, key="text2", placeholder="بتدوّر على إيه ؟")
@@ -44,7 +44,7 @@ with tab2:
             for i in range(len(result)):
                 with st.expander(f"See Result {i + 1}"):
                     st.write(result[i])
-                    del result
+            del result
                     
                     
 with st.container(border=True):
