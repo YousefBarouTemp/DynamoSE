@@ -12,7 +12,15 @@ nltk.download("punkt")
 nltk.download('stopwords')
 
 class SearchEngine():
+    """Search Engine class for making an arabic search engine
+       This class is using an ARABIC NEWS DATASET https://www.sciencedirect.com/science/article/pii/S2352340919304305
+       AUTHORS: Omar Einea, Ashraf Alnagar, Ridhwan Al Debsi
+       Methods:
+       find(query, choice): this the only interface of the class, you must provide the query and
+       the searching type either using boolean model or Ranking search
+    """
     def __init__(self):
+        # Initializing and configuring all requirements to reduce computation
         
         self.__docs = pd.read_csv("assets/Arabic news preprocessed_2500.csv", index_col=0)
         
@@ -73,6 +81,8 @@ class SearchEngine():
         return ' '.join(lemmatized_query)
 
     def __extract_vocabulary(self):
+        # Method used to extract the vocabulary of the documents
+        # - Saved to reduce computations later
         list_docs = list(self.__docs['Preprocessed'].to_numpy())
         self.__voc = []
         for doc in list_docs:
@@ -82,6 +92,8 @@ class SearchEngine():
                     self.__voc.append(word)
 
     def __term_document_matrix_indexing(self):
+        # Method used to create the indexing of the boolean model for the documents
+        # - Saved to reduce computations later
         list_docs = list(self.__docs['Preprocessed'].to_numpy())
         self.__term_frequency_model = []
         for d in list_docs:
@@ -94,11 +106,16 @@ class SearchEngine():
             self.__term_frequency_model.append(freq)
             
     def __tfidf_indexing(self):
+        # Method used to create the indexing of the ranking search for the documents
+        # - Saved to reduce computation later
         list_docs = list(self.__docs['Preprocessed'].to_numpy())
         self.__tfidf_vectorizer = TfidfVectorizer()
         self.__tfidf_docs_vec = self.__tfidf_vectorizer.fit_transform(list_docs)
 
     def __term_document_matrix_query_transform(self,query):
+        # Method used especially for the boolean model to vectorize the query depends on the
+        # the boolean model created for the documents
+        # :: Check if the vocabulary exists in the query on not (Vector)
         query_vector = []
         for word in self.__voc:
             if word in query:
@@ -108,11 +125,15 @@ class SearchEngine():
         return query_vector
 
     def __tfidf_query_transform(self,query):
+        # Method used especially for the ranking model to vectorize the query depends on the
+        # the tf-idf model created for the documents
         query_vector = self.__tfidf_vectorizer.transform([query])
         return query_vector
 
 
     def __term_document_matrix_retrieve(self, query_vector):
+        # Method used to retrieve all results based on the query (Vector) for the boolean model
+        # :: Counts the number of matched words for ranking
         dict_res = {}
         for i in range(len(self.__term_frequency_model)):
             count = 0
@@ -124,11 +145,15 @@ class SearchEngine():
         return dict_res
 
     def __tfidf_retrieve(self,query_vector):
+        # Method used to retrieve all results based on the query (Vector) for the ranking model
+        # :: Computing the similarity between the query vector and the vector of each document
         similarity = np.dot(query_vector, self.__tfidf_docs_vec.T) / (norm(query_vector.toarray()) * self.__tfidf_docs_norm)
         return similarity
 
 
     def __term_document_matrix_ranking(self,query):
+        # Method used to retrieve the top ten results of the boolean model
+        # :: Collecting all private methods
         preprocessed_query = self.__preprocess(query)
         tokenized_preprocessed_query = preprocessed_query.split()
         query_vector = self.__term_document_matrix_query_transform(tokenized_preprocessed_query)
@@ -140,10 +165,13 @@ class SearchEngine():
         top_ten = []
         for Ix, _ in list_res[:10]:
             top_ten.append(self.__docs['Article'].iloc[Ix])
-            
+        
+        del preprocessed_query,tokenized_preprocessed_query, query_vector, result, list_res
         return top_ten
 
     def __tfidf_ranking(self,query):
+        # Method used to retrieve the top ten results of the ranking model
+        # :: Collecting all private methods
         preprocessed_query = self.__preprocess(query)
         query_vector = self.__tfidf_query_transform(preprocessed_query)
         result = self.__tfidf_retrieve(query_vector)
@@ -154,11 +182,14 @@ class SearchEngine():
         top_ten = []
         for Ix, _ in list_res[:10]:
             top_ten.append(self.__docs['Article'].iloc[Ix])
-            
+        
+        del preprocessed_query, query_vector, result, list_res
         return top_ten
 
 
     def find(self, query, choice):
+        # The interface of the search engine which takes query and return the result
+        # based on the choice either (1) for boolean model or (2) for ranking model -tfidf-
         if choice == 1:
             result = self.__term_document_matrix_ranking(query)
         elif choice == 2:
