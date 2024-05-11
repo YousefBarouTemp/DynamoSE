@@ -47,8 +47,8 @@ with tab2:
                     
 cc1, cc2, cc3 = st.columns([1,10,1])
 with cc2:
-    st.markdown("""**Created By:
-
+    st.header("Created by:")
+    st.markdown('''
     :red[Yousef Elbaroudy]
 
-    Email: yousef.elbaroudy02@gmail.com""")
+    Email: yousef.elbaroudy02@gmail.com''')
