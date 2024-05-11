@@ -52,4 +52,6 @@ with st.container(border=True):
         st.markdown('''
         :red[Yousef Elbaroudy]
 
-        Email: yousef.elbaroudy02@gmail.com''')
+        Email: yousef.elbaroudy02@gmail.com
+        
+        Github Profile: https://github.com/YousefTB''')
